@@ -4,6 +4,11 @@
   "license": "MIT",
   "private": false,
   "main": "./dist/paginetta.common.js",
+  "homepage": "https://gitlab.com/ludo237/paginetta#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/ludo237/paginetta.git"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
