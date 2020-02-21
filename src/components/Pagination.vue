@@ -1,48 +1,47 @@
 <template>
     <nav class="flex justify-center">
-        <ul class="flex pl-0 list-none rounded">
-            <li>
-                <a class="ml-0 rounded-l relative block bg-white border-gray-400 py-2 px-3 cursor-pointer" href="#"
+        <ul class="flex pl-0 list-none rounded bg-white">
+            <li class="ml-0 rounded-l block py-2 px-3">
+                <span v-if="selectedPage===1" aria-hidden="true" v-html="<<"/>
+                <a :aria-label="First Page"
+                   class="link"
+                   href="#"
                    @click.prevent="emitChangePageEvent(1)"
-                   :disable="selectedPage===1"
-                   :aria-label="$trans.get('pagination.first.text')">
-                    <span aria-hidden="true">first</span>
-                </a>
+                   v-html="<<" v-else/>
             </li>
 
-            <li>
-                <a class="relative block bg-white border-gray-400 py-2 px-3 cursor-pointer" href="#"
+            <li class="block py-2 px-3">
+                <span v-if="selectedPage===1" aria-hidden="true" v-html="<"/>
+                <a class="link" href="#"
                    @click.prevent="emitChangePageEvent(meta.current_page - 1)"
-                   :disable="selectedPage===1"
-                   :aria-label="$trans.get('pagination.previous.text')">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
+                   :aria-label="Previous Page"
+                   v-html="<"
+                   v-else/>
             </li>
 
             <li v-for="(page, index) in pages" :key="index">
-                <a class="relative block py-2 px-3 cursor-pointer"
-                   :disable="isActive(page)" :class="activeClasses(page)"
-                   href="#" @click.prevent="emitChangePageEvent(page)">
-                    <span>{{ page }}</span>
-                </a>
+                <a class="block py-2 px-3" href="#"
+                   :class="activeClasses(page)"
+                   @click.prevent="emitChangePageEvent(page)"
+                   v-html="page"/>
             </li>
 
-            <li>
-                <a class="relative block bg-white border-gray-400 py-2 px-3 cursor-pointer" href="#"
+            <li class="block py-2 px-3">
+                <span v-if="meta.last_page === selectedPage" aria-hidden="true" v-html=">"/>
+                <a class="link" href="#"
                    @click.prevent="emitChangePageEvent(meta.current_page + 1)"
-                   :disable="meta.last_page === selectedPage"
-                   :aria-label="$trans.get('pagination.next.text')">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
+                   :aria-label="Next Page"
+                   v-html=">"
+                   v-else/>
             </li>
 
-            <li>
-                <a class="ml-0 rounded-r relative block bg-white border-gray-400 py-2 px-3 cursor-pointer" href="#"
+            <li class="ml-0 rounded-r block py-2 px-3">
+                <span v-if="meta.last_page === selectedPage" aria-hidden="true" v-html=">>"/>
+                <a class="link" href="#"
                    @click.prevent="emitChangePageEvent(meta.last_page)"
-                   :disable="meta.last_page === selectedPage"
-                   :aria-label="$trans.get('pagination.last.text')">
-                    <span aria-hidden="true">last</span>
-                </a>
+                   :aria-label="Last Page"
+                   v-html=">>"
+                   v-else/>
             </li>
         </ul>
     </nav>
@@ -69,6 +68,10 @@
           return;
         }
 
+        if(this.isActive(page)) {
+          return;
+        }
+
         this.selectedPage = page;
 
         this.$emit('page:changed', page);
@@ -80,20 +83,19 @@
 
       activeClasses(page) {
         return this.isActive(page)
-          ? ['bg-blue-400', 'border-blue-400', 'text-white']
+          ? ['bg-blue-500', 'text-white', 'cursor-not-allowed']
           : ['bg-white', 'border-gray-400'];
       },
     },
 
     computed: {
       pages() {
-        return Math.round(this.meta.total / this.meta.per_page);
+        let result = Math.ceil(this.meta.total / this.meta.per_page);
+
+        return result < 1
+          ? 1
+          : result;
       },
     },
   };
 </script>
-
-<style lang="sass">
-  @import "../assets/pagination.scss";
-</style>
-
